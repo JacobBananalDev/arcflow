@@ -15,20 +15,34 @@ Arcflow is a modern full-stack SaaS platform built with:
 
 Frontend → Next.js  
 Backend → Go (Chi REST API)  
-Database → PostgreSQL  
+Database → PostgreSQL (Dockerized locally)
+
+---
+
+## Current Backend Structure
+
+backend/
+├── cmd/server        → Application entrypoint  
+├── internal/config   → Environment configuration  
+├── internal/db       → PostgreSQL connection layer  
+└── go.mod            → Module definition  
 
 ---
 
 ## Development Status
 
-Phase 1:
-- [x] Backend scaffold (Go + Chi)
-- [ ] PostgreSQL integration
-- [ ] Dockerization
-- [ ] Local orchestration
-- [ ] Authentication
+### Phase 1 – Core Backend Infrastructure
+- [x] Go module initialization
+- [x] Chi router with health endpoint
+- [x] Environment-based configuration
+- [x] PostgreSQL connection pool (pgx)
+- [x] Dockerized PostgreSQL via Compose
+- [ ] Database migrations system
+- [ ] Domain models & handlers
+- [ ] Authentication (JWT)
 
-Phase 2:
-- AWS deployment
-- CI/CD automation
-- Production logging & observability
+### Phase 2 – Production Readiness
+- [ ] Containerized backend service
+- [ ] CI pipeline (GitHub Actions)
+- [ ] AWS deployment (ECS + RDS)
+- [ ] Structured logging & observability
