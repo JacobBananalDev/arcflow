@@ -5,15 +5,20 @@ import (
 )
 
 type Config struct {
-	Port string
+	Port        string
+	DatabaseURL string
 }
 
 func Load() *Config {
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "9090"
+		port = "8080"
 	}
+
+	dbURL := os.Getenv("DATABASE_URL")
+
 	return &Config{
 		Port: port,
+		DatabaseURL: dbURL,
 	}
 }
