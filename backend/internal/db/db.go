@@ -8,7 +8,11 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
+// Connect initializes a PostgreSQL connection pool
+// It validates connectivity before returning to ensure the
+// application fails fast if the database is unreachable
 func Connect(databaseURL string) (*pgxpool.Pool, error) {
+	// Create a context with timeout to avoid hanging startup
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -17,7 +21,7 @@ func Connect(databaseURL string) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
-	// Test the connection
+	// Verify the database connectivity 
 	if err := pool.Ping(ctx); err != nil {
 		return nil, err
 	}
