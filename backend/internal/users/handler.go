@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"golang.org/x/crypto/bcrypt"
 )
 
 // Handler provides HTTP handlers for users.
@@ -22,8 +23,8 @@ func NewHandler(repo *Repository) *Handler {
 // CreateUser handles POST /users requests.
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	var input struct {
-		Email        string `json:"email"`
-		PasswordHash string `json:"password_hash"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
 	}
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
@@ -31,10 +32,26 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Basic validation
+	if input.Email == "" || input.Password == "" {
+		http.Error(w, "Email and password are required", http.StatusBadRequest)
+		return
+	}
+
+	// Hash password server-side
+	hashedPassword, err := bcrypt.GenerateFromPassword(
+		[]byte(input.Password),
+		bcrypt.DefaultCost,
+	)
+	if err != nil {
+		http.Error(w, "Failed to process password", http.StatusInternalServerError)
+		return
+	}
+
 	user := &User{
 		ID:           uuid.New().String(),
 		Email:        input.Email,
-		PasswordHash: input.PasswordHash,
+		PasswordHash: string(hashedPassword),
 		CreatedAt:    time.Now(),
 	}
 
@@ -47,5 +64,18 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
-	json.NewEncoder(w).Encode(user)
+
+	// Never return password hash
+	response := struct {
+		ID        string    `json:"id"`
+		Email     string    `json:"email"`
+		CreatedAt time.Time `json:"created_at"`
+	}{
+		ID:        user.ID,
+		Email:     user.Email,
+		CreatedAt: user.CreatedAt,
+	}
+
+	json.NewEncoder(w).Encode(response)
 }
+
