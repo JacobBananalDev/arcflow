@@ -32,7 +32,7 @@ func main() {
 	userRepo := users.NewRepository(pool)
 
 	//  Initialize handler layer
-	_ = userRepo
+	userHandler := users.NewHandler(userRepo)
 
 	// Initialize HTTP router and define routes
 	r := chi.NewRouter()
@@ -41,6 +41,8 @@ func main() {
 	r.Get("/health", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Arcflow API running"))
 	})
+
+	r.Post("/users", userHandler.CreateUser)
 
 	log.Printf("Server running on :%s\n", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, r))
