@@ -10,6 +10,32 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// CreateUserRequest represents the registration payload.
+type CreateUserRequest struct {
+	Email    string `json:"email" example:"user@example.com"`
+	Password string `json:"password" example:"strongpassword123"`
+}
+
+// CreateUserResponse represents the registration response.
+type CreateUserResponse struct {
+	ID        string    `json:"id"`
+	Email     string    `json:"email"`
+	CreatedAt time.Time `json:"created_at"`
+}
+
+// LoginRequest represents login payload.
+type LoginRequest struct {
+	Email    string `json:"email" example:"user@example.com"`
+	Password string `json:"password" example:"strongpassword123"`
+}
+
+// LoginResponse represents successful login response.
+type LoginResponse struct {
+	ID    string `json:"id"`
+	Email string `json:"email"`
+}
+
+
 // Handler provides HTTP handlers for users.
 type Handler struct {
 	repo *Repository
@@ -21,11 +47,19 @@ func NewHandler(repo *Repository) *Handler {
 }
 
 // CreateUser handles POST /users requests.
+// CreateUser godoc
+// @Summary Register a new user
+// @Description Creates a new user with email and password
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param request body CreateUserRequest true "User registration payload"
+// @Success 201 {object} CreateUserResponse
+// @Failure 400 {string} string "Invalid input"
+// @Failure 500 {string} string "Internal server error"
+// @Router /users [post]
 func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var input CreateUserRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
@@ -81,11 +115,19 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 
 // Login handles POST /login requests.
+// Login godoc
+// @Summary Authenticate user
+// @Description Authenticates a user with email and password
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body LoginRequest true "Login payload"
+// @Success 200 {object} LoginResponse
+// @Failure 400 {string} string "Invalid input"
+// @Failure 401 {string} string "Invalid credentials"
+// @Router /login [post]
 func (h *Handler) Login(w http.ResponseWriter, r *http.Request) {
-	var input struct {
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}
+	var input LoginRequest
 
 	if err := json.NewDecoder(r.Body).Decode(&input); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
