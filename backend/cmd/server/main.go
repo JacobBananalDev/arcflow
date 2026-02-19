@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/jacobbananaldev/arcflow/internal/config"
 	"github.com/jacobbananaldev/arcflow/internal/db"
+	"github.com/jacobbananaldev/arcflow/internal/users"
 )
 
 // main is the application entry point.
@@ -26,6 +27,12 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer pool.Close()
+
+	// Initialize repository layer
+	userRepo := users.NewRepository(pool)
+
+	//  Initialize handler layer
+	_ = userRepo
 
 	// Initialize HTTP router and define routes
 	r := chi.NewRouter()
