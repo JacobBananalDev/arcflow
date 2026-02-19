@@ -1,3 +1,9 @@
+// @title Arcflow API
+// @version 1.0
+// @description Arcflow authentication and user management API.
+// @host localhost:8080
+// @BasePath /
+
 package main
 
 import (
@@ -8,6 +14,9 @@ import (
 	"github.com/jacobbananaldev/arcflow/internal/config"
 	"github.com/jacobbananaldev/arcflow/internal/db"
 	"github.com/jacobbananaldev/arcflow/internal/users"
+
+	_ "github.com/jacobbananaldev/arcflow/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 // main is the application entry point.
@@ -44,6 +53,9 @@ func main() {
 
 	r.Post("/users", userHandler.CreateUser)
 	r.Post("/login", userHandler.Login)
+
+	// Swagger UI
+	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
 	log.Printf("Server running on :%s\n", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, r))
