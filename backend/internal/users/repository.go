@@ -31,3 +31,28 @@ func (r *Repository) Create(ctx context.Context, user *User) error {
 
 	return err
 }
+
+// GetByEmail retrieves a user by email.
+func (r *Repository) GetByEmail(ctx context.Context, email string) (*User, error) {
+	query := `
+		SELECT id, email, password_hash, created_at
+		FROM users
+		WHERE email = $1
+	`
+
+	row := r.db.QueryRow(ctx, query, email)
+
+	var user User
+	err := row.Scan(
+		&user.ID,
+		&user.Email,
+		&user.PasswordHash,
+		&user.CreatedAt,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	return &user, nil
+}
+

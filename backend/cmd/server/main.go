@@ -43,6 +43,7 @@ func main() {
 	})
 
 	r.Post("/users", userHandler.CreateUser)
+	r.Post("/login", userHandler.Login)
 
 	log.Printf("Server running on :%s\n", cfg.Port)
 	log.Fatal(http.ListenAndServe(":"+cfg.Port, r))
