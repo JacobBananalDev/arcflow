@@ -14,5 +14,18 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
+  migrate:
+    image: migrate/migrate
+    container_name: arcflow-migrate
+    depends_on:
+      - db
+    volumes:
+      - ./backend/migrations:/migrations
+    entrypoint: [
+      "migrate",
+      "-path=/migrations",
+      "-database=postgres://arcflow:arcflow@db:5432/arcflow?sslmode=disable"
+    ]
+
 volumes:
   postgres_data:
