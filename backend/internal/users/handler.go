@@ -35,7 +35,7 @@ func (h *Handler) CreateUser(w http.ResponseWriter, r *http.Request) {
 		ID:           uuid.New().String(),
 		Email:        input.Email,
 		PasswordHash: input.PasswordHash,
-		CreateAt:    time.Now(),
+		CreatedAt:    time.Now(),
 	}
 
 	ctx, cancel := context.WithTimeout(r.Context(), 3*time.Second)

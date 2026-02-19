@@ -2,9 +2,9 @@ package users
 
 import "time"
 
-type User struct{
-	ID string
-	Email string
+type User struct {
+	ID           string
+	Email        string
 	PasswordHash string
-	CreateAt time.Time
+	CreatedAt    time.Time
 }
